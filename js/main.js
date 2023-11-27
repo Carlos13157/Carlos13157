@@ -10,8 +10,6 @@ renderer.xr.enabled = true;
 document.body.appendChild(renderer.domElement);
 document.body.appendChild( VRButton.createButton( renderer ) );
 
-renderer.xr.setReferenceSpaceType('local');
-
 scene.background = new THREE.CubeTextureLoader()
     .setPath('Materials/')
     .load([
@@ -48,28 +46,22 @@ function crearCubos() {
 }
 
 // Objeto estático
-const staticGeometry = new THREE.SphereGeometry(0.0015, 32, 32);
+const staticGeometry = new THREE.SphereGeometry(0.005, 32, 32);
 const staticMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff }); // Cambiado el color para diferenciarlo
 const staticSphere = new THREE.Mesh(staticGeometry, staticMaterial);
 scene.add(staticSphere);
 
 
 //camera.position.z = -5;
-camera.position.set(0, 0, 5); // Ajusta la posición inicial de la cámara
+camera.position.set(0, 0, -3); // Ajusta la posición inicial de la cámara
 
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
-//const stereoEffect = new THREE.StereoEffect(renderer);
-//stereoEffect.eyeSeparation = 0.06; // Ajusta la separación de los ojos según sea necesario
-
-//const controls = new THREE.DeviceOrientationControls(camera);
 
 function animate() {
     requestAnimationFrame(animate);
-
-
 
     /////////////////////////////////////////////////////////////////
 
@@ -82,20 +74,12 @@ function animate() {
         intersects[ i ].object.material.color.set( 0xff0000 );
     
     }
-
     ////////////////////////////////////////////////////////////////
-
-
      // Rotación de los cubos
     scene.children.forEach(function (cubo) {
         cubo.rotation.x += 0.01;
         cubo.rotation.y += 0.01;
     });
-
-    //stereoEffect.render(scene, camera);
-    //renderer.render( scene, camera );
-
-    //controls.update();
 
     // Asigna la posición de la cámara al objeto estático
     staticSphere.position.copy(camera.position);
@@ -106,31 +90,21 @@ function animate() {
     staticSphere.lookAt(staticSphere.position.clone().add(cameraDirection));
 
     // Ajusta la posición del staticSphere para que esté siempre en frente de la cámara
-    const distance = 0.11; // Ajusta la distancia según sea necesario
+    const distance = 0.15; // Ajusta la distancia según sea necesario
     const newPosition = camera.position.clone().add(cameraDirection.multiplyScalar(distance));
     staticSphere.position.copy(newPosition);
 
-    
-
-    
     window.addEventListener( 'pointermove', onPointerMove );
 }
 
 function onPointerMove( event ) {
-
-
 	pointer.x = 0;
 	pointer.y = 0;
-
 }
 
 renderer.setAnimationLoop( function () {
-
 	renderer.render( scene, camera );
-
 } );
 
 crearCubos();
 animate();
-
-
