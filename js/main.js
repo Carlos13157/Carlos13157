@@ -10,6 +10,8 @@ renderer.xr.enabled = true;
 document.body.appendChild(renderer.domElement);
 document.body.appendChild( VRButton.createButton( renderer ) );
 
+renderer.xr.setReferenceSpaceType('local');
+
 scene.background = new THREE.CubeTextureLoader()
     .setPath('Materials/')
     .load([
@@ -46,14 +48,14 @@ function crearCubos() {
 }
 
 // Objeto estático
-const staticGeometry = new THREE.SphereGeometry(0.005, 32, 32);
+const staticGeometry = new THREE.SphereGeometry(0.0015, 32, 32);
 const staticMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff }); // Cambiado el color para diferenciarlo
 const staticSphere = new THREE.Mesh(staticGeometry, staticMaterial);
 scene.add(staticSphere);
 
 
 //camera.position.z = -5;
-camera.position.set(0, 0, -3); // Ajusta la posición inicial de la cámara
+camera.position.set(0, 0, 5); // Ajusta la posición inicial de la cámara
 
 
 const raycaster = new THREE.Raycaster();
