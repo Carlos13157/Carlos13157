@@ -45,7 +45,16 @@ function crearCubos() {
     }
 }
 
-camera.position.z = 5;
+// Objeto estático
+const staticGeometry = new THREE.SphereGeometry(0.005, 32, 32);
+const staticMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff }); // Cambiado el color para diferenciarlo
+const staticSphere = new THREE.Mesh(staticGeometry, staticMaterial);
+scene.add(staticSphere);
+
+
+//camera.position.z = -5;
+camera.position.set(0, 0, -3); // Ajusta la posición inicial de la cámara
+
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -58,11 +67,13 @@ const pointer = new THREE.Vector2();
 function animate() {
     requestAnimationFrame(animate);
 
+
+
     /////////////////////////////////////////////////////////////////
 
     raycaster.setFromCamera( pointer, camera );
 
-    const intersects = raycaster.intersectObjects( scene.children );
+    const intersects = raycaster.intersectObjects(scene.children.filter(obj => obj !== staticSphere));
 
     for ( let i = 0; i < intersects.length; i ++ ) {
 
@@ -83,6 +94,22 @@ function animate() {
     //renderer.render( scene, camera );
 
     //controls.update();
+
+    // Asigna la posición de la cámara al objeto estático
+    staticSphere.position.copy(camera.position);
+
+    // Obtiene la dirección de la cámara en el espacio del mundo y la usa para establecer la orientación del staticSphere
+    const cameraDirection = new THREE.Vector3();
+    camera.getWorldDirection(cameraDirection);
+    staticSphere.lookAt(staticSphere.position.clone().add(cameraDirection));
+
+    // Ajusta la posición del staticSphere para que esté siempre en frente de la cámara
+    const distance = 0.11; // Ajusta la distancia según sea necesario
+    const newPosition = camera.position.clone().add(cameraDirection.multiplyScalar(distance));
+    staticSphere.position.copy(newPosition);
+
+    
+
     
     window.addEventListener( 'pointermove', onPointerMove );
 }
