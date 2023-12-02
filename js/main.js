@@ -50,11 +50,6 @@ camera.position.z = 5;
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
-//const stereoEffect = new THREE.StereoEffect(renderer);
-//stereoEffect.eyeSeparation = 0.06; // Ajusta la separación de los ojos según sea necesario
-
-//const controls = new THREE.DeviceOrientationControls(camera);
-
 function animate() {
     requestAnimationFrame(animate);
 
@@ -79,10 +74,6 @@ function animate() {
         cubo.rotation.y += 0.01;
     });
 
-    //stereoEffect.render(scene, camera);
-    //renderer.render( scene, camera );
-
-    //controls.update();
     
     window.addEventListener( 'pointermove', onPointerMove );
 }
