@@ -45,10 +45,15 @@ function crearCubos() {
     }
 }
 
-camera.position.z = 5;
+
+
+//camera.position.z = -5;
+camera.position.set(0, 0, -3); // Ajusta la posición inicial de la cámara
+
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
+
 
 function animate() {
     requestAnimationFrame(animate);
@@ -57,42 +62,33 @@ function animate() {
 
     raycaster.setFromCamera( pointer, camera );
 
-    const intersects = raycaster.intersectObjects( scene.children );
+    const intersects = raycaster.intersectObjects(scene.children);
 
     for ( let i = 0; i < intersects.length; i ++ ) {
 
         intersects[ i ].object.material.color.set( 0xff0000 );
     
     }
-
     ////////////////////////////////////////////////////////////////
-
-
      // Rotación de los cubos
     scene.children.forEach(function (cubo) {
         cubo.rotation.x += 0.01;
         cubo.rotation.y += 0.01;
     });
 
-    
+
+
     window.addEventListener( 'pointermove', onPointerMove );
 }
 
 function onPointerMove( event ) {
-
-
 	pointer.x = 0;
 	pointer.y = 0;
-
 }
 
 renderer.setAnimationLoop( function () {
-
 	renderer.render( scene, camera );
-
 } );
 
 crearCubos();
 animate();
-
-
