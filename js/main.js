@@ -1,4 +1,6 @@
+//import {XRControllerModelFactory} from '/libraries/XRControllerModelFactory' ;
 import {VRButton} from '/libraries/VRButton.js';
+
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -27,6 +29,14 @@ const geometry = new THREE.BoxGeometry(1, 1, 1);
 const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
+
+// Agregamos el objeto marker
+const marker = new THREE.Mesh(
+    new THREE.CircleGeometry(0.05, 32).rotateX(-Math.PI / 2),
+    new THREE.MeshBasicMaterial({ color: 0xff0000 })
+);
+marker.visible = false;
+scene.add(marker);
 
 function crearCubos() {
     var cantidadDeCubos = 100;
