@@ -94,7 +94,7 @@ controls.enableKeys = false;
   const raycaster2 = new THREE.Raycaster();
 
   let firstRun = true;
-  (function animate() {
+  function animate() {
     requestAnimationFrame(animate);
 
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -159,7 +159,7 @@ controls.enableKeys = false;
 
 	window.addEventListener( 'pointermove', onPointerMove );
     firstRun = false;
-  })();
+  };
 
   function onPointerMove( event ) {
 	pointer.x = 0;
