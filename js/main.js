@@ -44,12 +44,7 @@ controls.enableKeys = false;
 	const Ambientlight = new THREE.AmbientLight( 0x404040 ); // soft white light
 	scene.add( Ambientlight );
 
-	// const geometry = new THREE.BoxGeometry(1, 1, 1);
-	// const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-	// const cube = new THREE.Mesh(geometry, material);
-	// scene.add(cube);
-
-	const selectable = [];
+    const selectable = [];
 	
 	function crearCubos() {
 		const cantidadDeCubos = 100;
@@ -64,9 +59,7 @@ controls.enableKeys = false;
 			Cubo.position.y = (Math.random() - 0.5) * 10;
 			Cubo.position.z = (Math.random() - 0.5) * 10;
 
-
-	
-			scene.add(Cubo);
+            scene.add(Cubo);
 
 			selectable.push({
 				selected: false,
@@ -78,7 +71,6 @@ controls.enableKeys = false;
 		}
 	}
 	
-
   const cursorSize = 1;
   const cursorThickness = 1.5;
   const cursorGeometry = new THREE.RingBufferGeometry(
@@ -98,7 +90,6 @@ controls.enableKeys = false;
 
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
-  
 
   const raycaster2 = new THREE.Raycaster();
 
@@ -165,7 +156,7 @@ controls.enableKeys = false;
 	 cursor.material.color.set(selectable.some(obj => obj.selected) ? new THREE.Color("crimson") : new THREE.Color("white"));
 
 
-    //renderer.render(scene, camera);
+
 	window.addEventListener( 'pointermove', onPointerMove );
     firstRun = false;
   })();
@@ -182,3 +173,4 @@ renderer.setAnimationLoop( function () {
 } );
 
   crearCubos();
+  animate();
