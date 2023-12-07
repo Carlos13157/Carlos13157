@@ -165,7 +165,7 @@ controls.enableKeys = false;
 	 cursor.material.color.set(selectable.some(obj => obj.selected) ? new THREE.Color("crimson") : new THREE.Color("white"));
 
 
-    renderer.render(scene, camera);
+    //renderer.render(scene, camera);
 	window.addEventListener( 'pointermove', onPointerMove );
     firstRun = false;
   })();
@@ -175,5 +175,10 @@ controls.enableKeys = false;
 	pointer.y = 0;
 }
 
+renderer.setAnimationLoop( function () {
+
+	renderer.render( scene, camera );
+
+} );
 
   crearCubos();
