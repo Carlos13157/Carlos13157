@@ -15,11 +15,11 @@ const camera = new THREE.PerspectiveCamera(75, aspect, cameraMin, 1000);
 
 
 const controls = new OrbitControls(camera, renderer.domElement);
-// controls.enableRotate = false;
-// controls.enablePan = false;
-// controls.enableZoom = false;
-// controls.enableDamping = false;
-// controls.enableKeys = false;
+controls.enableRotate = false;
+controls.enablePan = false;
+controls.enableZoom = false;
+controls.enableDamping = false;
+controls.enableKeys = false;
 
 const scene = new THREE.Scene();
 
