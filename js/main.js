@@ -154,5 +154,18 @@ renderer.setAnimationLoop(function () {
   updateSelection();
 });
 
+
+function render() {
+  // Otras actualizaciones de la escena
+  updateSelection();
+
+  // Renderizar la escena para la realidad virtual
+  renderer.xr.render(scene, camera);
+
+  // Continuar el bucle de renderizado para la realidad virtual
+  session.requestAnimationFrame(render);
+}
+
+
 crearCubos();
 animate();
