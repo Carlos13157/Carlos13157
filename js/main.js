@@ -91,6 +91,62 @@ camera.add(cursor);
 const raycaster2 = new THREE.Raycaster();
 let firstRun = true;
 
+const controller = renderer.xr.getController(0);
+controller.addEventListener('selectstart', onSelectStart);
+scene.add(controller);
+
+function onSelectStart(event) {
+  const controller = event.target;
+
+  const intersections = getIntersections(controller);
+
+  if (intersections.length > 0) {
+    const object = intersections[0].object;
+
+    const index = selectable.findIndex(item => item.object === object);
+
+    if (index !== -1) {
+      const selected = !selectable[index].selected;
+
+      cursor.material.color.set(selected ? new THREE.Color("crimson") : new THREE.Color("white"));
+
+      if (selected) {
+        selectable[index].object.material.color.set(0xff0000);
+      } else {
+        selectable[index].object.material.color.set(0x00ff00);
+      }
+
+      if (selected) {
+        selectable[index].action();
+      }
+
+      selectable[index].selected = selected;
+    }
+  }
+}
+
+function getIntersections(controller) {
+  const tempMatrix = new THREE.Matrix4();
+  const direction = new THREE.Vector3();
+  const raycaster = new THREE.Raycaster();
+
+  direction.set(0, 0, -1).applyMatrix4(controller.matrixWorld);
+  raycaster.set(controller.position, direction);
+
+  return selectable.filter(item => {
+    const object = item.object;
+    const matrixWorld = object.matrixWorld;
+
+    if (raycaster.ray.intersectBox(object.geometry.boundingBox.clone().applyMatrix4(matrixWorld))) {
+      return true;
+    }
+
+    return false;
+  });
+}
+
+
+
 function animate() {
   requestAnimationFrame(animate);
 
@@ -137,23 +193,6 @@ function updateSelection() {
     }
     selectable[i].selected = selected;
   }
-}
-
-function onPointerMove(event) {
-  // Puedes agregar lógica adicional aquí si es necesario
-}
-
-// Manejar eventos de puntero según estés en modo VR o no
-if (renderer.xr.isPresenting) {
-  // En modo VR
-  renderer.xr.addEventListener('selectstart', onSelectStart);
-} else {
-  // Fuera del modo VR
-  window.addEventListener('pointermove', onPointerMove);
-}
-
-function onSelectStart(event) {
-  // Lógica para manejar eventos de selección en modo VR
 }
 
 renderer.setAnimationLoop(function () {
