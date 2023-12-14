@@ -13,7 +13,6 @@ const cameraMin = 0.0001;
 const aspect = window.innerWidth / window.innerHeight;
 const camera = new THREE.PerspectiveCamera(75, aspect, cameraMin, 1000);
 const controls = new OrbitControls(camera, renderer.domElement);
-// Bloquea todas las funciones del OrbitControls
 controls.enableRotate = false;
 controls.enablePan = false;
 controls.enableZoom = false;
@@ -54,7 +53,6 @@ function crearCubos() {
     const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
     const Cubo = new THREE.Mesh(geometry, material);
 
-    // Asigna posiciones aleatorias a los cubos
     Cubo.position.x = (Math.random() - 0.5) * 10;
     Cubo.position.y = (Math.random() - 0.5) * 10;
     Cubo.position.z = (Math.random() - 0.5) * 10;
@@ -89,7 +87,6 @@ cursor.position.z = -cameraMin * 50;
 camera.add(cursor);
 
 const raycaster2 = new THREE.Raycaster();
-
 let firstRun = true;
 
 function animate() {
@@ -101,47 +98,60 @@ function animate() {
 
   controls.update();
 
-  // Rotación de los cubos
   scene.children.forEach(function (cubo) {
     cubo.rotation.x += 0.01;
     cubo.rotation.y += 0.01;
   });
 
   if (!firstRun) {
-    for (let i = 0, length = selectable.length; i < length; i++) {
-      const camPosition = camera.position.clone();
-      const objectPosition = selectable[i].object.position.clone();
-      raycaster2.set(camPosition, camera.getWorldDirection(objectPosition));
-
-      const intersects2 = raycaster2.intersectObject(selectable[i].object);
-
-      const selected = intersects2.length > 0;
-
-      cursor.material.color.set(selected ? new THREE.Color("crimson") : new THREE.Color("white"));
-
-      // Cambiar color del objeto solo cuando está seleccionado
-      if (selected) {
-        selectable[i].object.material.color.set(0xff0000);
-      } else {
-        selectable[i].object.material.color.set(0x00ff00);
-      }
-
-      if (selected && !selectable[i].selected) {
-        selectable[i].action();
-      }
-      selectable[i].selected = selected;
-    }
+    updateSelection();
   }
 
-  // Cambia el color del cursor aquí si es necesario
   cursor.material.color.set(selectable.some(obj => obj.selected) ? new THREE.Color("crimson") : new THREE.Color("white"));
 
-  window.addEventListener('pointermove', onPointerMove);
   firstRun = false;
+}
+
+function updateSelection() {
+  for (let i = 0, length = selectable.length; i < length; i++) {
+    const camPosition = camera.position.clone();
+    const objectPosition = selectable[i].object.position.clone();
+    raycaster2.set(camPosition, camera.getWorldDirection(objectPosition));
+
+    const intersects2 = raycaster2.intersectObject(selectable[i].object);
+
+    const selected = intersects2.length > 0;
+
+    cursor.material.color.set(selected ? new THREE.Color("crimson") : new THREE.Color("white"));
+
+    if (selected) {
+      selectable[i].object.material.color.set(0xff0000);
+    } else {
+      selectable[i].object.material.color.set(0x00ff00);
+    }
+
+    if (selected && !selectable[i].selected) {
+      selectable[i].action();
+    }
+    selectable[i].selected = selected;
+  }
 }
 
 function onPointerMove(event) {
   // Puedes agregar lógica adicional aquí si es necesario
+}
+
+// Manejar eventos de puntero según estés en modo VR o no
+if (renderer.xr.isPresenting) {
+  // En modo VR
+  renderer.xr.addEventListener('selectstart', onSelectStart);
+} else {
+  // Fuera del modo VR
+  window.addEventListener('pointermove', onPointerMove);
+}
+
+function onSelectStart(event) {
+  // Lógica para manejar eventos de selección en modo VR
 }
 
 renderer.setAnimationLoop(function () {
