@@ -1,6 +1,5 @@
 import * as THREE from './three.module.js';
 import { VRButton } from '/libraries/VRButton.js';
-import { OrbitControls } from './orbitcontrols.js';
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -12,22 +11,6 @@ const cameraMin = 0.0001;
 
 const aspect = window.innerWidth / window.innerHeight;
 const camera = new THREE.PerspectiveCamera(75, aspect, cameraMin, 1000);
-const controls = new OrbitControls(camera, renderer.domElement);
-// Bloquea todas las funciones del OrbitControls
-controls.enableRotate = false;
-controls.enablePan = false;
-controls.enableZoom = false;
-controls.enableDamping = false;
-controls.enableKeys = false;
-
-// Añade el siguiente bloque para manejar el modo VR
-renderer.xr.addEventListener('sessionstart', function () {
-  controls.enabled = false;
-});
-
-renderer.xr.addEventListener('sessionend', function () {
-  controls.enabled = true;
-});
 
 const scene = new THREE.Scene();
 
@@ -45,13 +28,6 @@ scene.background = new THREE.CubeTextureLoader()
     'rainbow_ft.png',
     'rainbow_bk.png'
   ]);
-
-const BackgroundGeometry = new THREE.SphereGeometry(100, 32, 16);
-
-const light = new THREE.PointLight(0xffffff, 1, 100);
-scene.add(light);
-const Ambientlight = new THREE.AmbientLight(0x404040); // soft white light
-scene.add(Ambientlight);
 
 const selectable = [];
 
@@ -101,14 +77,58 @@ const raycaster2 = new THREE.Raycaster();
 
 let firstRun = true;
 
+function onSelectStart(event) {
+  const controller = event.target;
+  const intersections = getIntersections(controller);
+
+  if (intersections.length > 0) {
+    const object = intersections[0].object;
+    const index = selectable.findIndex((item) => item.object === object);
+
+    if (index !== -1 && !selectable[index].selected) {
+      selectable[index].action();
+      selectable[index].selected = true;
+    }
+  }
+}
+
+function onSelectEnd(event) {
+  const controller = event.target;
+  const intersections = getIntersections(controller);
+
+  if (intersections.length > 0) {
+    const object = intersections[0].object;
+    const index = selectable.findIndex((item) => item.object === object);
+
+    if (index !== -1) {
+      selectable[index].selected = false;
+    }
+  }
+}
+
+function getIntersections(controller) {
+  raycaster2.ray.origin.copy(controller.position);
+  raycaster2.ray.direction.set(0, 0, -1).applyQuaternion(controller.quaternion);
+
+  return selectable
+    .filter((item) => item.object.visible)
+    .map((item) => {
+      const intersects = raycaster2.intersectObject(item.object);
+      return {
+        object: item.object,
+        intersects,
+      };
+    })
+    .filter((item) => item.intersects.length > 0)
+    .sort((a, b) => a.intersects[0].distance - b.intersects[0].distance);
+}
+
 function animate() {
   requestAnimationFrame(animate);
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
-
-  controls.update();
 
   // Rotación de los cubos
   scene.children.forEach(function (cubo) {
@@ -117,43 +137,25 @@ function animate() {
   });
 
   if (!firstRun) {
-    for (let i = 0, length = selectable.length; i < length; i++) {
-      const camPosition = camera.position.clone();
-      const objectPosition = selectable[i].object.position.clone();
-      raycaster2.set(camPosition, camera.getWorldDirection(objectPosition));
+    const intersections = getIntersections(renderer.xr.getController(0));
+    const selected = intersections.length > 0;
 
-      const intersects2 = raycaster2.intersectObject(selectable[i].object);
+    cursor.material.color.set(selected ? new THREE.Color("crimson") : new THREE.Color("white"));
 
-      const selected = intersects2.length > 0;
-
-      cursor.material.color.set(selected ? new THREE.Color("crimson") : new THREE.Color("white"));
-
-      // Cambiar color del objeto solo cuando está seleccionado
-      if (selected) {
-        selectable[i].object.material.color.set(0xff0000);
-      } else {
-        selectable[i].object.material.color.set(0x00ff00);
-      }
-
-      if (selected && !selectable[i].selected) {
-        selectable[i].action();
-      }
-      selectable[i].selected = selected;
-    }
+    intersections.forEach((intersection) => {
+      const { object } = intersection;
+      object.material.color.set(selected ? 0xff0000 : 0x00ff00);
+    });
   }
 
   // Cambia el color del cursor aquí si es necesario
   cursor.material.color.set(selectable.some(obj => obj.selected) ? new THREE.Color("crimson") : new THREE.Color("white"));
 
-  window.addEventListener('pointermove', onPointerMove);
   firstRun = false;
 }
 
-function onPointerMove(event) {
-  // Puedes agregar lógica adicional aquí si es necesario
-}
-
 renderer.setAnimationLoop(function () {
+  animate();
   renderer.render(scene, camera);
 });
 
