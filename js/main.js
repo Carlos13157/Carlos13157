@@ -1,6 +1,15 @@
-import * as THREE from './three.module.js';
-import { VRButton } from '/libraries/VRButton.js';
-import { OrbitControls } from './orbitcontrols.js';
+// import * as THREE from './three.module.js';
+// import { OrbitControls } from './orbitcontrols.js';
+// import { VRButton } from '/libraries/VRButton.js';
+//import { XRControllerModelFactory } from './XRControllerModelFactory.js';
+
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.119.1/build/three.module.min.js";
+import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.119.1/examples/jsm/controls/OrbitControls.min.js";
+import { VRButton } from "https://cdn.jsdelivr.net/npm/three@0.119.1/examples/jsm/webxr/VRButton.min.js";
+import { XRControllerModelFactory } from "https://cdn.jsdelivr.net/npm/three@0.119.1/examples/jsm/webxr/XRControllerModelFactory.min.js";
+
+let controller1, controller2;
+let controllerGrip1, controllerGrip2;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -13,13 +22,12 @@ const cameraMin = 0.0001;
 const aspect = window.innerWidth / window.innerHeight;
 const camera = new THREE.PerspectiveCamera(75, aspect, cameraMin, 1000);
 
-
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableRotate = false;
-controls.enablePan = false;
-controls.enableZoom = false;
-controls.enableDamping = false;
-controls.enableKeys = false;
+// controls.enableRotate = false;
+// controls.enablePan = false;
+// controls.enableZoom = false;
+// controls.enableDamping = false;
+// controls.enableKeys = false;
 
 const scene = new THREE.Scene();
 
@@ -37,8 +45,6 @@ scene.background = new THREE.CubeTextureLoader()
     'rainbow_ft.png',
     'rainbow_bk.png'
   ]);
-
-const BackgroundGeometry = new THREE.SphereGeometry(100, 32, 16);
 
 const light = new THREE.PointLight(0xffffff, 1, 100);
 scene.add(light);
@@ -114,15 +120,24 @@ function animate() {
   firstRun = false;
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
+
+let isVR = false; // Variable para indicar si estamos en el modo VR
+
 
 function updateSelection() {
   for (let i = 0, length = selectable.length; i < length; i++) {
     const camPosition = camera.position.clone();
     const objectPosition = selectable[i].object.position.clone();
-    raycaster2.set(camPosition, camera.getWorldDirection(objectPosition));
+
+    //raycaster2.set(camPosition, camera.getWorldDirection(objectPosition));
+
+    if (isVR) {
+      raycaster2.set(camPosition, camera.getWorldDirection(objectPosition));
+    } else {
+      raycaster2.set(camPosition, camera.getWorldDirection(objectPosition));
+    }
+
 
     const intersects2 = raycaster2.intersectObject(selectable[i].object);
 
@@ -143,29 +158,14 @@ function updateSelection() {
   }
 }
 
-
-
-
-
-/////////////////////////////////////////
-
 renderer.setAnimationLoop(function () {
   renderer.render(scene, camera);
   updateSelection();
 });
 
-
-function render() {
-  // Otras actualizaciones de la escena
-  updateSelection();
-
-  // Renderizar la escena para la realidad virtual
-  renderer.xr.render(scene, camera);
-
-  // Continuar el bucle de renderizado para la realidad virtual
-  session.requestAnimationFrame(render);
-}
-
-
 crearCubos();
 animate();
+
+////////////////////////////////////////
+
+
