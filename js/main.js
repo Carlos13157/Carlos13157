@@ -14,32 +14,23 @@ let controllerGrip1, controllerGrip2;
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.xr.enabled = true;
+renderer.xr.cameraAutoUpdate;
+
 document.body.appendChild(renderer.domElement);
+
+let isVR = false;
 document.body.appendChild(VRButton.createButton(renderer));
-
-
-
-document.body.appendChild(VRButton.createButton(renderer));
-
-
-function onSessionStart() {
-if (xr.isPresenting) {
-  console.warn("Modo VR Activado")
-  return 
-}
-}
-
-function onSessionEnd() {
-
-}
-
-navigator.xr.addEventListener('sessionstart', onSessionStart);
-navigator.xr.addEventListener('sessionend', onSessionEnd);
 
 const cameraMin = 0.0001;
 
 const aspect = window.innerWidth / window.innerHeight;
 const camera = new THREE.PerspectiveCamera(75, aspect, cameraMin, 1000);
+
+camera.position.z = 5;
+
+// let xrCamera;
+
+//const xrCamera = renderer.xr.getCamera(camera); 
 
 const controls = new OrbitControls(camera, renderer.domElement);
 // controls.enableRotate = false;
@@ -50,7 +41,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 const scene = new THREE.Scene();
 
-camera.position.z = 5;
+
 
 scene.add(camera);
 
@@ -137,49 +128,85 @@ function animate() {
   cursor.material.color.set(selectable.some(obj => obj.selected) ? new THREE.Color("crimson") : new THREE.Color("white"));
 
   firstRun = false;
+  
+  if (isVR) {
+    // Si estás en modo VR, verifica si se está utilizando la cámara estéreo
+    if (renderer.xr.getSession()) {
+      const xrCamera = renderer.xr.getCamera(camera); 
+      if (xrCamera instanceof THREE.Camera) {
+        console.log('Se está utilizando la cámara estéreo en modo VR');
+      }
+    }
+  }
+
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
-
 function updateSelection() {
-  for (let i = 0, length = selectable.length; i < length; i++) {
-    const camPosition = camera.position.clone();
-    const objectPosition = selectable[i].object.position.clone();
+  
 
-    raycaster2.set(camPosition, camera.getWorldDirection(objectPosition));
+    function onSessionStart() {
+      isVR = true;
+      console.log('La sesión VR está activa');
+      // Otras acciones necesarias al entrar en el modo VR
 
-    const intersects2 = raycaster2.intersectObject(selectable[i].object);
+    }
+    
+    function onSessionEnd() {
+      isVR = false;
+      console.log('La sesión VR no está activa');
+      // Otras acciones necesarias al salir del modo VR
+    }
+    
+    // Intenta obtener la sesión al inicio
+    const session = renderer.xr.getSession();
+    if (session) {
+      onSessionStart();
+      //const cameraVR = renderer.xr.getCamera();
+      
 
-    const selected = intersects2.length > 0;
-
-    cursor.material.color.set(selected ? new THREE.Color("crimson") : new THREE.Color("white"));
-
-    if (selected) {
-      selectable[i].object.material.color.set(0xff0000);
+      for (let i = 0, length = selectable.length; i < length; i++) {
+        const camPosition = camera.position.clone();
+        const objectPosition = selectable[i].object.position.clone();
+    
+        raycaster2.set(camPosition, camera.getWorldDirection(objectPosition));
+        const intersects2 = raycaster2.intersectObject(selectable[i].object);
+        const selected = intersects2.length > 0;
+    
+        cursor.material.color.set(selected ? new THREE.Color("crimson") : new THREE.Color("white"));
+    
+        if (selected) {
+          selectable[i].object.material.color.set(0xff0000);
+        } else {
+          selectable[i].object.material.color.set(0x00ff00);
+        }
+    
+        if (selected && !selectable[i].selected) {
+          selectable[i].action();
+        }
+        selectable[i].selected = selected;
+      }
     } else {
-      selectable[i].object.material.color.set(0x00ff00);
+      onSessionEnd();
     }
+    
+    // Manejo de eventos para cambios en la sesión
+    renderer.xr.addEventListener('sessionstart', onSessionStart);
+    renderer.xr.addEventListener('sessionend', onSessionEnd);
 
-    if (selected && !selectable[i].selected) {
-      selectable[i].action();
-    }
-    selectable[i].selected = selected;
-  }
+    
 }
+
+crearCubos();
+animate();
 
 renderer.setAnimationLoop(function () {
   renderer.render(scene, camera);
   updateSelection();
 });
 
-crearCubos();
-animate();
+
 
 ////////////////////////////////////////
-
-
