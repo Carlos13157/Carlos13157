@@ -21,9 +21,6 @@ document.body.appendChild(VRButton.createButton(renderer));
 
 document.body.appendChild(VRButton.createButton(renderer));
 
-document.querySelector('a-scene').addEventListener('enter-vr', function () {
-  console.log("ENTERED VR");
-});
 
 function onSessionStart() {
 if (xr.isPresenting) {
