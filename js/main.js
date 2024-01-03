@@ -17,6 +17,28 @@ renderer.xr.enabled = true;
 document.body.appendChild(renderer.domElement);
 document.body.appendChild(VRButton.createButton(renderer));
 
+
+
+document.body.appendChild(VRButton.createButton(renderer));
+
+document.querySelector('a-scene').addEventListener('enter-vr', function () {
+  console.log("ENTERED VR");
+});
+
+function onSessionStart() {
+if (xr.isPresenting) {
+  console.warn("Modo VR Activado")
+  return 
+}
+}
+
+function onSessionEnd() {
+
+}
+
+navigator.xr.addEventListener('sessionstart', onSessionStart);
+navigator.xr.addEventListener('sessionend', onSessionEnd);
+
 const cameraMin = 0.0001;
 
 const aspect = window.innerWidth / window.innerHeight;
@@ -122,7 +144,9 @@ function animate() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-let isVR = false; // Variable para indicar si estamos en el modo VR
+
+
+
 
 
 function updateSelection() {
@@ -130,14 +154,7 @@ function updateSelection() {
     const camPosition = camera.position.clone();
     const objectPosition = selectable[i].object.position.clone();
 
-    //raycaster2.set(camPosition, camera.getWorldDirection(objectPosition));
-
-    if (isVR) {
-      raycaster2.set(camPosition, camera.getWorldDirection(objectPosition));
-    } else {
-      raycaster2.set(camPosition, camera.getWorldDirection(objectPosition));
-    }
-
+    raycaster2.set(camPosition, camera.getWorldDirection(objectPosition));
 
     const intersects2 = raycaster2.intersectObject(selectable[i].object);
 
