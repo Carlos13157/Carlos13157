@@ -16,6 +16,7 @@ const cameraMin = 0.0001;
 
 const aspect = window.innerWidth / window.innerHeight;
 const camera = new THREE.PerspectiveCamera(75, aspect, cameraMin, 1000);
+camera.name = "main Camera";
 
 camera.position.z = 5;
 
@@ -92,9 +93,8 @@ const cursorMaterial = new THREE.MeshBasicMaterial({ color: "white" });
 const cursor = new THREE.Mesh(cursorGeometry, cursorMaterial);
 
 cursor.position.z = -0.005;
-cursor.position.x = -0.001;
 
-camera.add(cursor);
+scene.add(cursor);
 
 const raycaster2 = new THREE.Raycaster();
 let firstRun = true;
@@ -122,11 +122,13 @@ function animate() {
   
   if (isVR) {
     // Si estás en modo VR, verifica si se está utilizando la cámara estéreo
-    if (renderer.xr.getSession()) {
+    if (renderer.xr.isPresenting) {
       xrCamera = renderer.xr.getCamera(camera); 
       if (xrCamera instanceof THREE.Camera) {
-        console.log('Se está utilizando la cámara estéreo en modo VR');
+        // console.log('Se está utilizando la cámara estéreo en modo VR');
       }
+    }else{
+      xrCamera = undefined;
     }
   }
 }
@@ -137,13 +139,17 @@ function updateSelection() {
   
 
     function onSessionStart() {
+      currentCamera = xrCamera;
       isVR = true;
+      // currentCamera.add(cursor);
+
       // console.log('La sesión VR está activa');
       // Otras acciones necesarias al entrar en el modo VR
 
     }
     
     function onSessionEnd() {
+      currentCamera = camera;
       isVR = false;
       // console.log('La sesión VR no está activa');
       // Otras acciones necesarias al salir del modo VR
@@ -152,16 +158,15 @@ function updateSelection() {
     // Intenta obtener la sesión al inicio
 
     let currentCamera;
-    const session = renderer.xr.getSession();
+    const session = renderer.xr.isPresenting;
     if(session){
       onSessionStart();
-      currentCamera = xrCamera;
     } else {
       onSessionEnd();
-      currentCamera = camera;
     }
 
-    console.log(cursor.position);
+    camera.add(cursor);
+
     for (let i = 0, length = selectable.length; i < length; i++) {
       const camPosition = currentCamera.position.clone();
       const objectPosition = selectable[i].object.position.clone();
