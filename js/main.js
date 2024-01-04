@@ -51,13 +51,18 @@ scene.add(Ambientlight);
 const selectable = [];
 
 function crearCubos() {
+<<<<<<< HEAD
   let cubos = new Array(300);
+=======
+  let cubos = new Array(100);
+>>>>>>> 819b27f46792d7cb7c9cde46a4bc083a0269a623
 
   for (let i = 0; i < cubos.length; i++) {
     const geometry = new THREE.BoxGeometry();
     const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
     cubos[i] = new THREE.Mesh(geometry, material);
 
+<<<<<<< HEAD
     cubos[i].position.x = (Math.random() - 0.5) * 20;
     cubos[i].position.y = (Math.random() - 0.5) * 20;
     cubos[i].position.z = (Math.random() - 0.5) * 20;
@@ -66,6 +71,12 @@ function crearCubos() {
     cubos[i].rotation.y = (Math.random() - 0.5) * 20;
     cubos[i].rotation.z = (Math.random() - 0.5) * 20;
 
+=======
+    cubos[i].position.x = (Math.random() - 0.5) * 10;
+    cubos[i].position.y = (Math.random() - 0.5) * 10;
+    cubos[i].position.z = (Math.random() - 0.5) * 10;
+
+>>>>>>> 819b27f46792d7cb7c9cde46a4bc083a0269a623
     scene.add(cubos[i]);
 
     selectable.push({
@@ -95,16 +106,26 @@ const cursorGeometry = new THREE.RingBufferGeometry(
 const cursorMaterial = new THREE.MeshBasicMaterial({ color: "white" });
 const cursor = new THREE.Mesh(cursorGeometry, cursorMaterial);
 
+<<<<<<< HEAD
 cursor.position.z = -0.0001*50;
 
+=======
+cursor.position.z = -0.005;
+cursor.position.x = -0.001;
+>>>>>>> 819b27f46792d7cb7c9cde46a4bc083a0269a623
 
 camera.add(cursor);
 
 const raycaster2 = new THREE.Raycaster();
 let firstRun = true;
 
+<<<<<<< HEAD
 // const arrowHelper = new THREE.ArrowHelper(camera.rotation, camera.position, 10, 0xFFFFFF);
 // scene.add(arrowHelper);
+=======
+const arrowHelper = new THREE.ArrowHelper(camera.rotation, camera.position, 10, 0xFFFFFF);
+scene.add(arrowHelper);
+>>>>>>> 819b27f46792d7cb7c9cde46a4bc083a0269a623
 
 function animate() {
   requestAnimationFrame(animate);
