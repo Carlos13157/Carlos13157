@@ -87,18 +87,6 @@ function crearCubos() {
 
 let cubos = crearCubos();
 
-// const cursorSize = 1;
-// const cursorThickness = 1.5;
-// const cursorGeometry = new THREE.RingBufferGeometry(
-//   cursorSize * cameraMin,
-//   cursorSize * cameraMin * cursorThickness,
-//   32,
-//   0,
-//   Math.PI * 0.5,
-//   Math.PI * 2
-// );
-// const cursorMaterial = new THREE.MeshBasicMaterial({ color: "white" });
-
 const cursorGeometry = new THREE.RingGeometry( 0.02, 0.04, 32 ).translate( 0, 0, - 1 );
 const cursorMaterial = new THREE.MeshBasicMaterial( { opacity: 0.5, transparent: false } );
 
