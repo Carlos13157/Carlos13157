@@ -1,6 +1,7 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.119.1/build/three.module.min.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.119.1/examples/jsm/controls/OrbitControls.min.js";
 import { VRButton } from "https://cdn.jsdelivr.net/npm/three@0.119.1/examples/jsm/webxr/VRButton.min.js";
+import { ARButton } from "https://cdn.jsdelivr.net/npm/three@0.119.1/examples/jsm/webxr/ARButton.js";
 import { XRControllerModelFactory } from "https://cdn.jsdelivr.net/npm/three@0.119.1/examples/jsm/webxr/XRControllerModelFactory.min.js";
 
 const renderer = new THREE.WebGLRenderer();
@@ -12,6 +13,9 @@ document.body.appendChild(renderer.domElement);
 let isVR = false;
 document.body.appendChild(VRButton.createButton(renderer));
 
+const ButtonAr = ARButton.createButton(renderer);
+document.body.appendChild(ButtonAr)
+
 const cameraMin = 0.0001;
 
 const aspect = window.innerWidth / window.innerHeight;
@@ -22,11 +26,11 @@ camera.position.z = 5;
 let xrCamera;
 
 const controls = new OrbitControls(camera, renderer.domElement);
-// controls.enableRotate = false;
-// controls.enablePan = false;
-// controls.enableZoom = false;
-// controls.enableDamping = false;
-// controls.enableKeys = false;
+//controls.enableRotate = false;
+//controls.enablePan = false;
+//controls.enableZoom = false;
+//controls.enableDamping = false;
+//controls.enableKeys = false;
 
 const scene = new THREE.Scene();
 
@@ -200,9 +204,7 @@ function updateSelection() {
     
     // Manejo de eventos para cambios en la sesión
     renderer.xr.addEventListener('sessionstart', onSessionStart);
-    renderer.xr.addEventListener('sessionend', onSessionEnd);
-
-    
+    renderer.xr.addEventListener('sessionend', onSessionEnd);  
 }
 
 animate();
