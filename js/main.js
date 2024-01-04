@@ -51,32 +51,21 @@ scene.add(Ambientlight);
 const selectable = [];
 
 function crearCubos() {
-<<<<<<< HEAD
-  let cubos = new Array(300);
-=======
-  let cubos = new Array(100);
->>>>>>> 819b27f46792d7cb7c9cde46a4bc083a0269a623
+  let cubos = new Array(500);
 
   for (let i = 0; i < cubos.length; i++) {
     const geometry = new THREE.BoxGeometry();
     const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
     cubos[i] = new THREE.Mesh(geometry, material);
 
-<<<<<<< HEAD
-    cubos[i].position.x = (Math.random() - 0.5) * 20;
-    cubos[i].position.y = (Math.random() - 0.5) * 20;
-    cubos[i].position.z = (Math.random() - 0.5) * 20;
+    cubos[i].position.x = (Math.random() - 0.5) * 27.5;
+    cubos[i].position.y = (Math.random() - 0.5) * 27.5;
+    cubos[i].position.z = (Math.random() - 0.5) * 27.5;
 
-    cubos[i].rotation.x = (Math.random() - 0.5) * 20;
-    cubos[i].rotation.y = (Math.random() - 0.5) * 20;
-    cubos[i].rotation.z = (Math.random() - 0.5) * 20;
+    cubos[i].rotation.x = (Math.random() - 0.5) * 27.5;
+    cubos[i].rotation.y = (Math.random() - 0.5) * 27.5;
+    cubos[i].rotation.z = (Math.random() - 0.5) * 27.5;
 
-=======
-    cubos[i].position.x = (Math.random() - 0.5) * 10;
-    cubos[i].position.y = (Math.random() - 0.5) * 10;
-    cubos[i].position.z = (Math.random() - 0.5) * 10;
-
->>>>>>> 819b27f46792d7cb7c9cde46a4bc083a0269a623
     scene.add(cubos[i]);
 
     selectable.push({
@@ -93,39 +82,33 @@ function crearCubos() {
 
 let cubos = crearCubos();
 
-const cursorSize = 1;
-const cursorThickness = 1.5;
-const cursorGeometry = new THREE.RingBufferGeometry(
-  cursorSize * cameraMin,
-  cursorSize * cameraMin * cursorThickness,
-  32,
-  0,
-  Math.PI * 0.5,
-  Math.PI * 2
-);
-const cursorMaterial = new THREE.MeshBasicMaterial({ color: "white" });
+// const cursorSize = 1;
+// const cursorThickness = 1.5;
+// const cursorGeometry = new THREE.RingBufferGeometry(
+//   cursorSize * cameraMin,
+//   cursorSize * cameraMin * cursorThickness,
+//   32,
+//   0,
+//   Math.PI * 0.5,
+//   Math.PI * 2
+// );
+// const cursorMaterial = new THREE.MeshBasicMaterial({ color: "white" });
+
+const cursorGeometry = new THREE.RingGeometry( 0.02, 0.04, 32 ).translate( 0, 0, - 1 );
+const cursorMaterial = new THREE.MeshBasicMaterial( { opacity: 0.5, transparent: false } );
+
 const cursor = new THREE.Mesh(cursorGeometry, cursorMaterial);
 
-<<<<<<< HEAD
 cursor.position.z = -0.0001*50;
+cursor.scale.set(1, 1, 1); // Escala inicial del cursor
 
-=======
-cursor.position.z = -0.005;
-cursor.position.x = -0.001;
->>>>>>> 819b27f46792d7cb7c9cde46a4bc083a0269a623
 
-camera.add(cursor);
 
 const raycaster2 = new THREE.Raycaster();
 let firstRun = true;
 
-<<<<<<< HEAD
 // const arrowHelper = new THREE.ArrowHelper(camera.rotation, camera.position, 10, 0xFFFFFF);
 // scene.add(arrowHelper);
-=======
-const arrowHelper = new THREE.ArrowHelper(camera.rotation, camera.position, 10, 0xFFFFFF);
-scene.add(arrowHelper);
->>>>>>> 819b27f46792d7cb7c9cde46a4bc083a0269a623
 
 function animate() {
   requestAnimationFrame(animate);
@@ -184,7 +167,10 @@ function updateSelection() {
     } else {
       onSessionEnd();
       currentCamera = camera;
+      
     }
+
+    camera.add(cursor);
 
     console.log(cursor.position);
     for (let i = 0, length = selectable.length; i < length; i++) {
@@ -195,12 +181,15 @@ function updateSelection() {
       const intersects2 = raycaster2.intersectObject(selectable[i].object);
       const selected = intersects2.length > 0;
   
-      cursor.material.color.set(selected ? new THREE.Color("crimson") : new THREE.Color("white"));
+      cursor.material.color.set(selected ? new THREE.Color("orange") : new THREE.Color("white"));
   
       if (selected) {
-        selectable[i].object.material.color.set(0xff0000);
+        selectable[i].object.material.color.set(0xffb900);
+        cursor.scale.set(1.2, 1.2, 1);
+        
       } else {
         selectable[i].object.material.color.set(0x00ff00);
+        cursor.scale.set(1, 1, 1);
       }
   
       if (selected && !selectable[i].selected) {
